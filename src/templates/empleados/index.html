@@ -1,0 +1,8 @@
+<h1>Hola Mondo !!!</h1>
+<p> Nombre: {{ cursor[0][1] }}</p>
+
+{% for item in cursor %}
+    <p> Nombre: {{ item[1] }}</p>
+    <p> Correo: {{ item[2] }}</p>
+    <p> Foto: {{ item[3] }}</p>
+{% endfor %}
