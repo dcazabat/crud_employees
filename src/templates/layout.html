@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ data.title }}</title>
+
+    <!-- FONT's-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;1,400&display=swap">
+
+    <!-- CSS's  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel='stylesheet' href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/scrollconteiner.css') }}"
+
+    <!-- JS's -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+
+</head>
+<body class="content" id="body-pd" data-spy="scroll" data-target="#myScrollspy" data-offset="1">
+    <header class="header" id="header">
+        <div class="header_toggle">
+            <i class="fas fa-align-justify" id="header-toggle"></i>
+        </div>
+        <div id="contact">
+            <span>Contacto</span>
+            <!-- Facebook -->
+            <a class="btn" href="https://www.facebook.com/DanielCazabat/" target="_blank">
+                <i class="fab fa-facebook"></i>
+            </a>
+            <!-- LinkedIn -->
+            <a class="btn" href="https://www.linkedin.com/in/daniel-cazabat-92223114b/" target="_blank">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <!-- Gmail -->
+            <a class="btn" href="mailto:dacazabat@gmail.com" target="_blank">
+                <i class="fab fa-google"></i>
+            </a>
+            <!-- GitHub -->
+            <a class="btn" href="https://github.com/dcazabat" target="_blank">
+                <i class="fab fa-github-square"></i>
+            </a>
+            <!-- Instragam -->
+            <a class="btn" href="https://www.instagram.com/daniel_cazabat/" target="_blank">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <!-- Whatsapp -->
+            <a class="btn" href="https://wa.link/1jespk" target="_blank">
+                <i class="fab fa-whatsapp-square"></i>
+            </a>
+        </div>
+    </header>
+    <!-- NavBar -->
+    <div class="left-navbar" id="nav-bar">
+        <nav class="nav" id="myScrollspy">
+            <div>
+                <div class="nav_logo">
+                    <img class="header_img" src="{{ url_for('static', filename='assets/images/perfil.jpg') }}" alt="Yo!!">
+                    <h6 class="nav_logo-name">Daniel Cazabat</h6>
+                </div>
+                <a href="#" class="nav_logo">
+                    <i class="fas fa-address-card nav_logo-icon"></i>
+                    <span class="nav_logo-name">Currilum Vitae</span>
+                </a>
+                <div class="nav_list">
+                    <a href="#object" class="nav_link scrollLink active">
+                        <i class="fas fa-user-shield nav_icon"></i>
+                        <span class="nav_name">Objetivo Personal</span>
+                    </a>
+                    <a href="#developer" class="nav_link scrollLink">
+                        <i class="fab fa-dev nav_icon"></i>
+                        <span class="nav_name">Desarrollador / IT</span>
+                    </a>
+                    <a href="#teaching" class="nav_link scrollLink">
+                        <i class="fas fa-chalkboard-teacher nav_icon"></i>
+                        <span class="nav_name">Enseñanza</span>
+                    </a>
+                    <a href="#others" class="nav_link scrollLink">
+                        <i class="fas fa-briefcase nav_icon"></i>
+                        <span class="nav_name">Otros Empleos</span>
+                    </a>
+                    <a href="#spertices" class="nav_link scrollLink">
+                        <i class="fab fa-vuejs nav_icon"></i>
+                        <span class="nav_name">Especializaciones</span>
+                    </a>
+                    <a href="#college" class="nav_link scrollLink">
+                        <i class="fas fa-university nav_icon"></i>
+                        <span class="nav_name">Estudios Previos</span>
+                    </a>
+                </div>
+                <a href="#intranet" class="nav_link scrollLink">
+                    <i class="fas fa-sign-in-alt nav_icon"></i>
+                    <span class="nav_name">Consultas</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
