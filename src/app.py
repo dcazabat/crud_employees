@@ -36,6 +36,11 @@ def page_not_found(error):
 
 @app.route('/')
 def index():
+    # data['message'] = 'Bienvenidos al Sitio'
+    return render_template('/index.html',data=data)
+
+@app.route('/employees')
+def employees():
     try:
         #sql = 'insert into empleados (nombre, correo, foto) values ("Daniela Leon", "mdel2002@hotmail.com", "fotodedaniela.png");'
         sql = 'SELECT * FROM empleados'
@@ -47,35 +52,37 @@ def index():
         cursor = cursor.fetchall()
         cabecera = list(cursor[0].keys())
         cabecera.remove('id')
+        data['message'] = 'Lista de Empleados'
 
-        return render_template('empleados/index.html', cursor=cursor, cabecera=cabecera, data=data)
+        return render_template('empleados/employees.html', cursor=cursor, cabecera=cabecera, data=data)
     except pymysql.err.OperationalError:
         data['errbd'] = True
-        return render_template('empleados/index.html', data=data)
+        return render_template('empleados/employees.html', data=data)
     except:
         return 'Error en codigo' 
 
 @app.route('/users')
 def users():
-    conn = None
-    cursor = None
     try:
+        sql = 'SELECT * FROM tbl_user'
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM tbl_user")
-        rows = cursor.fetchall()
-        table = Results(rows)
-        table.border = True
-        return render_template('login/users.html', table=table)
+        cursor.execute(sql)
+        cursor = cursor.fetchall()
+        cabecera = ['Nombre', 'E-mail']
+        data['message'] = 'Usuarios del Sistema'
+
+        return render_template('login/users.html', cursor=cursor, cabecera=cabecera, data=data)
+    except pymysql.err.OperationalError:
+        data['errbd'] = True
+        return render_template('login/users.html', data=data)
     except Exception as e:
-        print(e)
-    finally:
-        cursor.close() 
-        conn.close()
+        return str(e)
 
 @app.route('/new_user')
 def add_user_view():
-    return render_template('login/add.html')
+    data['message'] = 'Alta de Usuarios'
+    return render_template('login/add.html',data=data)
 
 @app.route('/add', methods=['POST'])
 def add_user():
@@ -91,20 +98,19 @@ def add_user():
             _hashed_password = generate_password_hash(_password)
             # save edits
             sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
-            data = (_name, _email, _hashed_password,)
+            datos = (_name, _email, _hashed_password,)
             conn = mysql.connect()
             cursor = conn.cursor()
-            cursor.execute(sql, data)
+            cursor.execute(sql, datos)
             conn.commit()
-            flash('User added successfully!')
-            return redirect('/')
+            return redirect('/users')
         else:
             return 'Error while adding user'
     except Exception as e:
         print(e)
-    finally:
-        cursor.close() 
-        conn.close()
+    # finally:
+    #     cursor.close()
+    #     conn.close()
 
 @app.route('/edit/<int:id>')
 def edit_view(id):

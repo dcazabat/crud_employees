@@ -1,15 +1,31 @@
-<doctype html>
-<title>List of users - Python Flask MySQL CRUD</title>
-<p><a href="{{ url_for('.add_user_view') }}"> Add User </a></p>
-<p>
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith %}
-</p>
-{{ table }}
+{% extends './layout.html' %}
+
+{% block body %}
+    {% if not data.errbd %}
+        <h1>{{ data.message }}</h1>
+
+        <table class="table table-dark table-striped table-bordered">
+            <thead>
+                <tr>
+                    {% for item in cabecera %}
+                        <th scope="col" style="color: orange; text-transform:capitalize;">{{ item }}</th>
+                        <!-- <th scope="col">Correo</th>
+                        <th scope="col">Foto</th> -->
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cursor %}
+                <tr>
+                    <td>{{ item['user_name'] }}</td>
+                    <td>{{ item['user_email'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="btn btn-primary" onclick="{{ url_for('.add_user_view') }}">Alta</button>
+        <p><a href="{{ url_for('.add_user_view') }}"> Usuarios </a></p>
+    {% else %}
+        <h1>Sin Conexión a la Base de Datos</h1>
+    {% endif %}
+{% endblock %}

@@ -65,40 +65,20 @@
                     <img class="header_img" src="{{ url_for('static', filename='assets/images/perfil.jpg') }}" alt="Yo!!">
                     <h6 class="nav_logo-name">Daniel Cazabat</h6>
                 </div>
-                <a href="#" class="nav_logo">
-                    <i class="fas fa-address-card nav_logo-icon"></i>
-                    <span class="nav_logo-name">Currilum Vitae</span>
-                </a>
                 <div class="nav_list">
-                    <a href="#object" class="nav_link scrollLink active">
+                    <a href="{{ url_for('.index') }}" class="nav_link scrollLink active">
+                        <i class="fas fa-user-home nav_icon"></i>
+                        <span class="nav_name">Home</span>
+                    </a>
+                    <a href="{{ url_for('.employees') }}" class="nav_link scrollLink">
                         <i class="fas fa-user-shield nav_icon"></i>
-                        <span class="nav_name">Objetivo Personal</span>
+                        <span class="nav_name">Empleados</span>
                     </a>
-                    <a href="#developer" class="nav_link scrollLink">
-                        <i class="fab fa-dev nav_icon"></i>
-                        <span class="nav_name">Desarrollador / IT</span>
-                    </a>
-                    <a href="#teaching" class="nav_link scrollLink">
+                    <a href="{{ url_for('.users') }}" class="nav_link scrollLink">
                         <i class="fas fa-chalkboard-teacher nav_icon"></i>
-                        <span class="nav_name">Enseñanza</span>
-                    </a>
-                    <a href="#others" class="nav_link scrollLink">
-                        <i class="fas fa-briefcase nav_icon"></i>
-                        <span class="nav_name">Otros Empleos</span>
-                    </a>
-                    <a href="#spertices" class="nav_link scrollLink">
-                        <i class="fab fa-vuejs nav_icon"></i>
-                        <span class="nav_name">Especializaciones</span>
-                    </a>
-                    <a href="#college" class="nav_link scrollLink">
-                        <i class="fas fa-university nav_icon"></i>
-                        <span class="nav_name">Estudios Previos</span>
+                        <span class="nav_name">Usuarios</span>
                     </a>
                 </div>
-                <a href="#intranet" class="nav_link scrollLink">
-                    <i class="fas fa-sign-in-alt nav_icon"></i>
-                    <span class="nav_name">Consultas</span>
-                </a>
             </div>
         </nav>
     </div>
