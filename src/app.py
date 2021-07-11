@@ -26,7 +26,9 @@ mysql.init_app(app)
 
 data={
     'title':'App de Flask - Empleados',
-    'message':'Bienvenidos al Sitio'
+    'message':'Bienvenidos al Sitio',
+    'errbd': False,
+    'session': ''
 }
 
 def page_not_found(error):
@@ -38,14 +40,20 @@ def index():
         #sql = 'insert into empleados (nombre, correo, foto) values ("Daniela Leon", "mdel2002@hotmail.com", "fotodedaniela.png");'
         sql = 'SELECT * FROM empleados'
         conn = mysql.connect()
-        cursor = conn.cursor()
-        cursor.execute(sql)
-        rv = cursor.fetchall()
-        conn.commit()
+        # conn.commit() # se usa cuando se hace un insert, update o delete
 
-        return render_template('empleados/index.html', cursor=rv, data=data)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute(sql)
+        cursor = cursor.fetchall()
+        cabecera = list(cursor[0].keys())
+        cabecera.remove('id')
+
+        return render_template('empleados/index.html', cursor=cursor, cabecera=cabecera, data=data)
+    except pymysql.err.OperationalError:
+        data['errbd'] = True
+        return render_template('empleados/index.html', data=data)
     except:
-        return 'Error en busqueda de archivo Index'
+        return 'Error en codigo' 
 
 @app.route('/users')
 def users():

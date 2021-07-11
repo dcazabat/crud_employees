@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
             nav = document.getElementById(navId),
             bodypd = document.getElementById(bodyId),
             headerpd = document.getElementById(headerId)
-
         // Valida si las varianles existen
         if (toggle && nav && bodypd && headerpd) {
+
             toggle.addEventListener('click', () => {
                 // muestra navbar
                 nav.classList.toggle('show')
