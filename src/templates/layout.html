@@ -67,17 +67,23 @@
                 </div>
                 <div class="nav_list">
                     <a href="{{ url_for('.index') }}" class="nav_link scrollLink active">
-                        <i class="fas fa-user-home nav_icon"></i>
+                        <i class="fas fa-house-user"></i>
                         <span class="nav_name">Home</span>
                     </a>
-                    <a href="{{ url_for('.employees') }}" class="nav_link scrollLink">
-                        <i class="fas fa-user-shield nav_icon"></i>
-                        <span class="nav_name">Empleados</span>
-                    </a>
-                    <a href="{{ url_for('.users') }}" class="nav_link scrollLink">
-                        <i class="fas fa-chalkboard-teacher nav_icon"></i>
-                        <span class="nav_name">Usuarios</span>
-                    </a>
+                    {% if data.session != '' %}
+                        <a href="{{ url_for('.employees') }}" class="nav_link scrollLink">
+                            <i class="fas fa-user-shield nav_icon"></i>
+                            <span class="nav_name">Empleados</span>
+                        </a>
+                        <a href="{{ url_for('.users') }}" class="nav_link scrollLink">
+                            <i class="fas fa-chalkboard-teacher nav_icon"></i>
+                            <span class="nav_name">Usuarios</span>
+                        </a>
+                        <a href="{{ url_for('.logout') }}" class="nav_link scrollLink">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="nav_name">Salir del Sistema</span>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </nav>

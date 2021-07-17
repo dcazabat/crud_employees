@@ -29,21 +29,70 @@ mysql.init_app(app)
 data={
     'title':'App de Flask - Empleados',
     'message':'Bienvenidos al Sitio',
+    'messagealternative':'',
     'errbd': False,
-    'session': ''
+    'session': '',
+    'username': ''
 }
+
+def test_connection():
+    cursor = None
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("select version();")
+        cursor = cursor.fetchall()
+        data['errbd'] = False
+    except pymysql.err.OperationalError:
+        data['errbd'] = True
+    except Exception as e:
+        print(e)
+
 
 def page_not_found(error):
     return render_template('404.html'), 404
 
 @app.route('/')
 def index():
-    # data['message'] = 'Bienvenidos al Sitio'
+    test_connection()
+    if data['errbd']:
+        data['messagealternative'] = 'Sin Conexión a la Base de Datos'
+    else:
+        data['messagealternative'] = 'Ingreso al sistema'
     return render_template('/index.html',data=data)
+
+@app.route('/login', methods=["POST"])
+def login():
+    _user = request.form['txtUser']
+    _pass = generate_password_hash(request.form['txtPassword'])
+    print(_user, _pass)
+    try:
+        sql = 'SELECT * FROM tbl_user WHERE user_email = (%s);'
+        datos = (_user,)
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute(sql, datos)
+        cursor = cursor.fetchall()
+        print(cursor[0]['user_password'] == _pass)
+        if len(cursor) == 1:
+            data['session'] = 'OK'
+            data['username'] = cursor[0]['user_name']
+        return redirect('/')
+    except pymysql.err.OperationalError:
+        data['errbd'] = True
+        return redirect('/')
+    except Exception as e:
+        print(e)
+
+
+@app.route('/logout')
+def logout():
+    data['session'] = ''
+    data['username'] = ''
+    return redirect('/')
 
 @app.route('/employees')
 def employees():
-    conn = None
     cursor = None
     try:
         #sql = 'insert into empleados (nombre, correo, foto) values ("Daniela Leon", "mdel2002@hotmail.com", "fotodedaniela.png");'
@@ -64,12 +113,10 @@ def employees():
         return render_template('empleados/employees.html', data=data)
     except Exception as e:
         print(e)
-    finally:
-        conn.close()
+
 
 @app.route('/users')
 def users():
-    conn = None
     cursor = None    
     try:
         sql = 'SELECT * FROM tbl_user'
@@ -86,8 +133,7 @@ def users():
         return render_template('login/users.html', data=data)
     except Exception as e:
         print(e)
-    finally:
-        conn.close()
+
 
 @app.route('/new_user')
 def add_user_view():
@@ -96,7 +142,6 @@ def add_user_view():
 
 @app.route('/add', methods=['POST'])
 def add_user():
-    conn = None
     cursor = None
     try: 
         _name = request.form['inputName']
@@ -107,8 +152,9 @@ def add_user():
         #do not save password as a plain text
             _hashed_password = generate_password_hash(_password)
             # save edits
-            sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
-            datos = (_name, _email, _hashed_password,)
+            sql = "INSERT INTO tbl_user(user_name, user_email, user_password, isadmin) VALUES(%s, %s, %s)"
+            datos = (_name, _email, _hashed_password)
+            print(datos)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, datos)
@@ -118,12 +164,10 @@ def add_user():
             return 'Error while adding user'
     except Exception as e:
         print(e)
-    finally:
-        conn.close()
+
 
 @app.route('/edit/<int:id>')
 def edit_view(id):
-    conn = None
     cursor = None
     try:
         conn = mysql.connect()
@@ -136,12 +180,10 @@ def edit_view(id):
             return 'Error loading #{id}'.format(id=id)
     except Exception as e:
         print(e)
-    finally:
-        conn.close()
+
 
 @app.route('/update', methods=['POST'])
 def update_user():
-    conn = None
     cursor = None
     try: 
         _name = request.form['inputName']
@@ -171,7 +213,6 @@ def update_user():
 
 @app.route('/delete/<int:id>')
 def delete_user(id):
-    conn = None
     cursor = None
     try:
         conn = mysql.connect()
@@ -181,9 +222,11 @@ def delete_user(id):
         return redirect('/users')
     except Exception as e:
         print(e)
-    finally:
-        conn.close()
+
 
 if __name__ == '__main__':
     app.register_error_handler(404,page_not_found)
+    # Modo Debugg
     app.run(debug=True)
+    # Modo Sin Debugg
+    # app.run(debug=False)

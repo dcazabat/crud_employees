@@ -1,31 +1,37 @@
 {% extends './layout.html' %}
 
 {% block body %}
-    {% if not data.errbd %}
-        <h1>{{ data.message }}</h1>
+{% if not data.errbd %}
+<h1>{{ data.message }}</h1>
 
-        <table class="table table-dark table-striped table-bordered">
-            <thead>
-                <tr>
-                    {% for item in cabecera %}
-                        <th scope="col" style="color: orange; text-transform:capitalize;">{{ item }}</th>
-                        <!-- <th scope="col">Correo</th>
-                        <th scope="col">Foto</th> -->
-                    {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cursor %}
-                <tr>
-                    <td>{{ item['user_name'] }}</td>
-                    <td>{{ item['user_email'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button class="btn btn-primary" onclick="{{ url_for('.add_user_view') }}">Alta</button>
-        <p><a href="{{ url_for('.add_user_view') }}"> Usuarios </a></p>
-    {% else %}
-        <h1>Sin Conexión a la Base de Datos</h1>
-    {% endif %}
+<table class="table table-dark table-striped table-bordered">
+    <thead>
+        <tr>
+            {% for item in cabecera %}
+            <th scope="col" style="color: orange; text-transform:capitalize;">{{ item }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cursor %}
+        <tr>
+            <td>{{ item['user_name'] }}</td>
+            <td>{{ item['user_email'] }}</td>
+            <td>
+                <a href="{{ url_for('.users') }}">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </a>
+                <a href="{{ url_for('.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a class="btn btn-primary formloginbtn" href="{{ url_for('.add_user_view') }}">Agregar</a>
+{% else %}
+<h1>Sin Conexión a la Base de Datos</h1>
+{% endif %}
 {% endblock %}

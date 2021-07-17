@@ -9,4 +9,21 @@
     beatae ipsum totam harum accusantium veritatis! Excepturi optio dolores atque vel cupiditate natus officia amet
     tempore nulla nemo quas nobis veniam assumenda minima voluptatum nesciunt, ut autem hic eius similique quae. Quos
     provident nemo blanditiis voluptatum quia soluta fugit consequatur.</p>
+{% if data.session == '' %}
+    <div class="centerdiv">
+        <div class="formlogin">
+            <!-- Login Form -->
+            <div class="alertnocnx">
+                <h4>{{ data.messagealternative }}</h4>
+            </div>
+            {% if not data.errbd %}
+            <form method="POST" action="/login" enctype="multipart/form-data">
+                <input type="text" name="txtUser" placeholder="Usuario" required>
+                <input type="password" name="txtPassword" placeholder="Contraseña" required>
+                <input class="btn btn-warning formloginbtn" type="submit" value="Ingresar">
+            </form>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
 {% endblock %}
