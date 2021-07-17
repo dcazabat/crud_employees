@@ -1,6 +1,6 @@
 import pymysql
 from tables import Results
-from flask import Flask, flash, render_template, request, redirect
+from flask import Flask, flash, render_template, request, redirect, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flaskext.mysql import MySQL
 
@@ -24,6 +24,8 @@ app.config['MYSQL_DATABASE_DB'] = 'empleados'
 
 mysql.init_app(app)
 
+
+# Diccionario de que Contiene parametros Globales de la App
 data={
     'title':'App de Flask - Empleados',
     'message':'Bienvenidos al Sitio',
@@ -41,6 +43,8 @@ def index():
 
 @app.route('/employees')
 def employees():
+    conn = None
+    cursor = None
     try:
         #sql = 'insert into empleados (nombre, correo, foto) values ("Daniela Leon", "mdel2002@hotmail.com", "fotodedaniela.png");'
         sql = 'SELECT * FROM empleados'
@@ -58,11 +62,15 @@ def employees():
     except pymysql.err.OperationalError:
         data['errbd'] = True
         return render_template('empleados/employees.html', data=data)
-    except:
-        return 'Error en codigo' 
+    except Exception as e:
+        print(e)
+    finally:
+        conn.close()
 
 @app.route('/users')
 def users():
+    conn = None
+    cursor = None    
     try:
         sql = 'SELECT * FROM tbl_user'
         conn = mysql.connect()
@@ -77,7 +85,9 @@ def users():
         data['errbd'] = True
         return render_template('login/users.html', data=data)
     except Exception as e:
-        return str(e)
+        print(e)
+    finally:
+        conn.close()
 
 @app.route('/new_user')
 def add_user_view():
@@ -108,9 +118,8 @@ def add_user():
             return 'Error while adding user'
     except Exception as e:
         print(e)
-    # finally:
-    #     cursor.close()
-    #     conn.close()
+    finally:
+        conn.close()
 
 @app.route('/edit/<int:id>')
 def edit_view(id):
@@ -128,7 +137,6 @@ def edit_view(id):
     except Exception as e:
         print(e)
     finally:
-        cursor.close()
         conn.close()
 
 @app.route('/update', methods=['POST'])
@@ -147,10 +155,10 @@ def update_user():
             print(_hashed_password)
             # save edits
             sql = "UPDATE tbl_user SET user_name=%s, user_email=%s, user_password=%s WHERE user_id=%s"
-            data = (_name, _email, _hashed_password, _id,)
+            datos = (_name, _email, _hashed_password, _id,)
             conn = mysql.connect()
             cursor = conn.cursor()
-            cursor.execute(sql, data)
+            cursor.execute(sql, datos)
             conn.commit()
             flash('User updated successfully!')
             return redirect('/')
@@ -158,8 +166,7 @@ def update_user():
             return 'Error while updating user'
     except Exception as e:
         print(e)
-    finally:
-        cursor.close() 
+    finally: 
         conn.close()
 
 @app.route('/delete/<int:id>')
@@ -171,12 +178,10 @@ def delete_user(id):
         cursor = conn.cursor()
         cursor.execute("DELETE FROM tbl_user WHERE user_id=%s", (id,))
         conn.commit()
-        flash('User deleted successfully!')
-        return redirect('/')
+        return redirect('/users')
     except Exception as e:
         print(e)
     finally:
-        cursor.close() 
         conn.close()
 
 if __name__ == '__main__':
