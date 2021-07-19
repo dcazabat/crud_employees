@@ -18,11 +18,11 @@
             <td>{{ item['user_name'] }}</td>
             <td>{{ item['user_email'] }}</td>
             <td>
-                <a href="{{ url_for('.users') }}">
-                    <i class="fas fa-chalkboard-teacher"></i>
+                <a href="/delete/{{ item['user_id'] }}">
+                    <i class="fas fa-trash-alt"></i>
                 </a>
-                <a href="{{ url_for('.logout') }}">
-                    <i class="fas fa-sign-out-alt"></i>
+                <a href="/edit/{{ item['user_id'] }}">
+                    <i class="fas fa-edit"></i>
                 </a>
             </td>
         </tr>

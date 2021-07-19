@@ -1,12 +1,12 @@
 import pymysql
-from tables import Results
 from flask import Flask, flash, render_template, request, redirect, session
-from werkzeug.security import generate_password_hash, check_password_hash
+# from cryptography.fernet import Fernet
 from flaskext.mysql import MySQL
 
 
 app = Flask(__name__)
-app.secret_key = "daniel"
+# key = "daniel"
+# encrypted_key = Fernet(key)
 mysql = MySQL()
 
 # MySQL configurations
@@ -53,6 +53,7 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 @app.route('/')
+@app.route('/home')
 def index():
     test_connection()
     if data['errbd']:
@@ -61,28 +62,28 @@ def index():
         data['messagealternative'] = 'Ingreso al sistema'
     return render_template('/index.html',data=data)
 
-@app.route('/login', methods=["POST"])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     _user = request.form['txtUser']
-    _pass = generate_password_hash(request.form['txtPassword'])
+    # _pass = encrypted_key.encrypt(request.form['txtPassword'])
+    _pass = request.form['txtPassword']
     print(_user, _pass)
     try:
-        sql = 'SELECT * FROM tbl_user WHERE user_email = (%s);'
-        datos = (_user,)
-        conn = mysql.connect()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute(sql, datos)
-        cursor = cursor.fetchall()
-        print(cursor[0]['user_password'] == _pass)
-        if len(cursor) == 1:
-            data['session'] = 'OK'
-            data['username'] = cursor[0]['user_name']
+        if request.method == 'POST':
+            sql = f'SELECT * FROM tbl_user WHERE user_email="{_user}";'
+            conn = mysql.connect()
+            cursor = conn.cursor(pymysql.cursors.DictCursor)
+            cursor.execute(sql)
+            cursor = cursor.fetchall()
+            if cursor[0]['user_password'] == _pass:
+                data['session'] = 'OK'
+                data['username'] = cursor[0]['user_name']
         return redirect('/')
     except pymysql.err.OperationalError:
         data['errbd'] = True
         return redirect('/')
     except Exception as e:
-        print(e)
+        return e
 
 
 @app.route('/logout')
@@ -112,7 +113,7 @@ def employees():
         data['errbd'] = True
         return render_template('empleados/employees.html', data=data)
     except Exception as e:
-        print(e)
+        return e
 
 
 @app.route('/users')
@@ -124,7 +125,8 @@ def users():
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute(sql)
         cursor = cursor.fetchall()
-        cabecera = ['Nombre', 'E-mail']
+        print(cursor)
+        cabecera = ['Nombre', 'E-mail', 'Acciones']
         data['message'] = 'Usuarios del Sistema'
 
         return render_template('login/users.html', cursor=cursor, cabecera=cabecera, data=data)
@@ -132,7 +134,7 @@ def users():
         data['errbd'] = True
         return render_template('login/users.html', data=data)
     except Exception as e:
-        print(e)
+        return e
 
 
 @app.route('/new_user')
@@ -140,7 +142,7 @@ def add_user_view():
     data['message'] = 'Alta de Usuarios'
     return render_template('login/add.html',data=data)
 
-@app.route('/add', methods=['POST'])
+@app.route('/add',  methods=['GET', 'POST'])
 def add_user():
     cursor = None
     try: 
@@ -150,66 +152,56 @@ def add_user():
         # validate the received values
         if _name and _email and _password and request.method == 'POST':
         #do not save password as a plain text
-            _hashed_password = generate_password_hash(_password)
+            _hashed_password = _password
+            # _hashed_password = encrypted_key.encrypt(_password)
             # save edits
-            sql = "INSERT INTO tbl_user(user_name, user_email, user_password, isadmin) VALUES(%s, %s, %s)"
+            sql = "INSERT INTO tbl_user(user_name, user_email, user_password) VALUES(%s, %s, %s)"
             datos = (_name, _email, _hashed_password)
-            print(datos)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, datos)
             conn.commit()
-            return redirect('/users')
-        else:
-            return 'Error while adding user'
+        return redirect('/users')
     except Exception as e:
-        print(e)
+        return e
 
 
 @app.route('/edit/<int:id>')
-def edit_view(id):
+def edit_user(id):
     cursor = None
+    data['message'] = 'Editar de Usuario'
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT * FROM tbl_user WHERE user_id=%s", id)
         row = cursor.fetchone()
-        if row:
-            return render_template('login/edit.html', row=row)
-        else:
-            return 'Error loading #{id}'.format(id=id)
+        return render_template('login/edit.html', row=row, data=data)
     except Exception as e:
-        print(e)
+        return e
 
 
-@app.route('/update', methods=['POST'])
+@app.route('/update', methods=['GET', 'POST'])
 def update_user():
     cursor = None
     try: 
         _name = request.form['inputName']
-        _email = request.form['inputEmail']
         _password = request.form['inputPassword']
-        _id = request.form['id']
+        _id = request.form['inputId']
         # validate the received values
-        if _name and _email and _password and _id and request.method == 'POST':
+        if _name and _password and _id and request.method == 'POST':
             #do not save password as a plain text
-            _hashed_password = generate_password_hash(_password)
-            print(_hashed_password)
+            # _hashed_password = encrypted_key.encrypt(_password)
+            _hashed_password = _password
             # save edits
-            sql = "UPDATE tbl_user SET user_name=%s, user_email=%s, user_password=%s WHERE user_id=%s"
-            datos = (_name, _email, _hashed_password, _id,)
+            sql = "UPDATE tbl_user SET user_name=%s, user_password=%s WHERE user_id=%s"
+            datos = (_name, _hashed_password, _id,)
             conn = mysql.connect()
             cursor = conn.cursor()
             cursor.execute(sql, datos)
             conn.commit()
-            flash('User updated successfully!')
-            return redirect('/')
-        else:
-            return 'Error while updating user'
+            return redirect('/users')
     except Exception as e:
-        print(e)
-    finally: 
-        conn.close()
+        return e
 
 @app.route('/delete/<int:id>')
 def delete_user(id):
@@ -221,12 +213,11 @@ def delete_user(id):
         conn.commit()
         return redirect('/users')
     except Exception as e:
-        print(e)
+        return e
 
 
 if __name__ == '__main__':
+    # Captura del Error 404, se puede hacer con los otros Errores
     app.register_error_handler(404,page_not_found)
     # Modo Debugg
     app.run(debug=True)
-    # Modo Sin Debugg
-    # app.run(debug=False)

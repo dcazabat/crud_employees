@@ -1,20 +1,22 @@
-<doctype html>
-<title>Edit User - Python Flask MySQL CRUD</title>
-<h2>Edit User</h2>
-<form method="post" action="/update">
-    <dl>
-        <p>
-            <input name="inputName" value="{{ row['user_name'] }}" type="text" placeholder="Name" autocomplete="off" required>
-        </p>
-        <p>
-            <input name="inputEmail" value="{{ row['user_email'] }}" type="text" placeholder="Email" autocomplete="off" required>
-        </p>
-        <p>
-            <input name="inputPassword" value="" type="password" placeholder="Password" autocomplete="off" required>
-        </p>
-    </dl>
-    <p>
-        <input name="id" value="{{ row['user_id'] }}" type="hidden">
-        <input type="submit" value="Submit">
-    </p>
+{% extends './layout.html' %}
+
+{% block body %}
+<h1>{{ data.message }} : {{ row['user_email'] }}</h1>
+
+<form method="POST" action="/update" enctype="multipart/form-data">
+    <input type="text" name="inputId" value="{{ row['user_id'] }}">
+    <div class="form-group">
+        <label for="name">Nombre</label>
+        <input type="text" class="form-control" value="{{ row['user_name'] }}" id="name" placeholder="Nombre" name="inputName" autocomplete="off"
+            required>
+    </div>
+    <div class="form-group">
+        <label for="password">Contraseña (Ingrese la Anterior o una Nueva)</label>
+        <input type="password" class="form-control" id="password" placeholder="Contraseña" name="inputPassword"
+            autocomplete="off" required>
+    </div>
+    <div>
+        <input class="btn btn-success formloginbtn" type="submit" value="Aceptar" />
+    </div>
 </form>
+{% endblock %}
