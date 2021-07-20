@@ -3,8 +3,8 @@
 {% block body %}
 <h1>{{ data.message }} : {{ row['user_email'] }}</h1>
 
-<form method="POST" action="/update" enctype="multipart/form-data">
-    <input type="text" name="inputId" value="{{ row['user_id'] }}">
+<form method="POST" action="/updateuser" enctype="multipart/form-data">
+    <input type="hidden" name="inputId" value="{{ row['user_id'] }}">
     <div class="form-group">
         <label for="name">Nombre</label>
         <input type="text" class="form-control" value="{{ row['user_name'] }}" id="name" placeholder="Nombre" name="inputName" autocomplete="off"

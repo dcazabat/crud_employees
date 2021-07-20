@@ -17,14 +17,25 @@
             <tbody>
                 {% for item in cursor %}
                 <tr>
+                    <td>{{ item['id'] }}</td>
+                    <td>
+                        <img width="80" src="{{ url_for('static', filename='assets/images/uploads/'+item.foto) }}" alt="foto de perfil">
+                    </td>
                     <td>{{ item['nombre'] }}</td>
                     <td>{{ item['correo'] }}</td>
-                    <td>{{ item['foto'] }}</td>
+                    <td>
+                        <a class="btn btn-danger" href="/deleteemployee/{{ item['id'] }}">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                        <a class="btn btn-success" href="/editemployee/{{ item['id'] }}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <p><a href="{{ url_for('.users') }}"> Usuarios </a></p>
+        <a class="btn btn-primary formloginbtn" href="{{ url_for('.add_employee_view') }}">Agregar</a>
     {% else %}
         <h1>Sin Conexión a la Base de Datos</h1>
     {% endif %}
